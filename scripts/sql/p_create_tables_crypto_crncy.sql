@@ -1,6 +1,7 @@
-CREATE TABLE MarketData (
-    DateIdx     BIGINT    NOT NULL   -- date passed since 1970-01-01
-  , TimeIdx     REAL      NOT NULL   -- seconds passed since midnight hhmmss.fff as float
+CREATE TABLE MarketDataL2 (
+    DataDate    DATE      NOT NULL   -- date passed since 1970-01-01
+  , Exchange    CHAR(6)   NOT NULL   -- GDAX
+  , TimeIdx     REAL      NOT NULL   -- seconds passed since midnight hhmmss.fff as float   
   , DateTime_   DATETIME  NOT NULL
   , BaseCrncy   CHAR(3)   NOT NULL 
   , QuoteCrncy  CHAR(3)   NOT NULL
@@ -8,6 +9,6 @@ CREATE TABLE MarketData (
   , Price       REAL      NOT NULL
   , Size        REAL      NOT NULL
   , NumOrders   INT       NOT NULL
-  , PRIMARY KEY (DateIdx, TimeIdx, Side, Price)
+  , PRIMARY KEY (DataDate, Exchange, TimeIdx, Side, Price)
 );
 
