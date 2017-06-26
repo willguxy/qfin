@@ -9,7 +9,6 @@ from ... import config
 
 GDAX_Config = config.GDAX_Config
 
-
 utcnow = datetime.utcnow
 
 
@@ -22,7 +21,7 @@ def snapshot_MarketDataL2_GDAX(DSN='CryptoCrncy', table='MarketDataL2'):
     ]
 
     tot_cnt   = 0
-    db_engine = create_engine("mysql+mysqldb://root:Research527@localhost/crypto_crncy")
+    db_engine = create_engine(config.DB_Config.crypto_crncy_str)
     client    = gdax.AuthenticatedClient(GDAX_Config.key, GDAX_Config.seckey, GDAX_Config.passwd)
 
     # Level 2:  price, size, num-orders

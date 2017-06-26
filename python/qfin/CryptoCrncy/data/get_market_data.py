@@ -3,6 +3,8 @@ from datetime import datetime
 from sqlalchemy import create_engine
 import pandas
 
+from ... import config
+
 
 def get_market_data(date, exchange=None, base_ccy=None, quote_ccy=None, start_time=0, end_time=99999, level=2):
 
@@ -29,7 +31,7 @@ def get_market_data(date, exchange=None, base_ccy=None, quote_ccy=None, start_ti
     if quote_ccy is not None:
         qry += " AND QuoteCrncy = '%s' " % quote_ccy
 
-    db_engine = create_engine("mysql+mysqldb://root:Research527@localhost/crypto_crncy")
+    db_engine = create_engine(config.DB_Config.crypto_crncy_str)
     dfBook = pandas.read_sql(qry, con=db_engine)
     dfBook['DataDate'] = pandas.to_datetime(dfBook['DataDate'], utc=True)
 
