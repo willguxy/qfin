@@ -18,9 +18,7 @@ from qfin.CryptoCrncy.proc import (
 
 
 def run():
-
     while True:
-
         now = utcnow()
         print('running %s' % now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]) 
 
