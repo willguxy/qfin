@@ -1,25 +1,21 @@
 from time import sleep
 from datetime import datetime
+utcnow = datetime.utcnow
+
 from sqlalchemy import create_engine
 from pandas import DataFrame
 
 import gdax
 
 from ... import config
+from ..constants import pairs
 
 GDAX_Config = config.GDAX_Config
 
-utcnow = datetime.utcnow
 
 
 def snapshot_MarketDataL2_GDAX(DSN='CryptoCrncy', table='MarketDataL2'):
     
-    pairs = [
-      ('BTC', 'USD'),
-      ('ETH', 'USD'), ('ETH', 'BTC'), 
-      ('LTC', 'USD'), ('LTC', 'BTC'),
-    ]
-
     tot_cnt   = 0
     db_engine = create_engine(config.DB_Config.crypto_crncy_str)
     client    = gdax.AuthenticatedClient(GDAX_Config.key, GDAX_Config.seckey, GDAX_Config.passwd)
@@ -72,6 +68,6 @@ def snapshot_MarketDataL2_GDAX(DSN='CryptoCrncy', table='MarketDataL2'):
         dfBook.to_sql('MarketDataL2', db_engine, if_exists='append', index=False)
 
         tot_cnt += dfBook.shape[0]
-        sleep(0.25)
+        sleep(0.34)
 
     return tot_cnt
