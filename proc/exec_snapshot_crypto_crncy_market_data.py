@@ -17,7 +17,9 @@ from qfin.CryptoCrncy.proc import (
         download_trade_data_GDAX,
     )
 
-import logging  # @ToDo: use logging instead of print
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 
 def run():
@@ -25,29 +27,29 @@ def run():
     wait = 1
     while True:
         now = utcnow()
-        print('running %s' % now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]) 
+        logger.info('running %s' % now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]) 
 
         exception_str = StringIO()
         try:
             cnt  = snapshot_MarketDataL2_GDAX()
-            print("  GDAX: loaded %s quotes" % cnt)
+            logger.info("  GDAX: loaded %s quotes" % cnt)
             wait = 1
         except Exception as err:
-            print("GDAX: failed to load market quote data")
+            logger.exception("GDAX: failed to load market quote data")
             traceback.print_exc(file=exception_str)
-            print('Stack info: \n' + exception_str.getvalue() + '\n')
+            logger.error('Stack info: \n' + exception_str.getvalue() + '\n')
             sleep(wait)
             wait *= 2
 
         exception_str = StringIO()
         try:
             cnt  = download_trade_data_GDAX()
-            print("  GDAX: loaded %s trades" % cnt)
+            logger.info("  GDAX: loaded %s trades" % cnt)
             wait = 1
         except Exception as err:
-            print("GDAX: failed to load market trade data")
+            logger.exception("GDAX: failed to load market trade data")
             traceback.print_exc(file=exception_str)
-            print('Stack info: \n' + exception_str.getvalue() + '\n')
+            logger.error('Stack info: \n' + exception_str.getvalue() + '\n')
             sleep(wait)
             wait *= 2
 
