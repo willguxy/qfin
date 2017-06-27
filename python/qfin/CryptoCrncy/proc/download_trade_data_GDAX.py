@@ -26,7 +26,7 @@ def download_trade_data_GDAX():
 
     # fetch max trade id for each pair
     qry = """SELECT Exchange, BaseCrncy, QuoteCrncy, MaxTradeId 
-             FROM TradeDataID WHERE Exchange = 'GDAX'; """
+             FROM TradeDataMaxID WHERE Exchange = 'GDAX'; """
     dfID    = pd.read_sql(qry, db_engine)
     
     max_ids = {}
@@ -45,7 +45,7 @@ def download_trade_data_GDAX():
         except Exception as err:
             pass
 
-    # First Update TradeDataID
+    # First Update TradeDataMaxID
     vbase, vquote, vmid = [], [], []
     for k, v in max_ids.items():
         base_ccy, quote_ccy = k[:3], k[-3:]
@@ -59,9 +59,9 @@ def download_trade_data_GDAX():
             , 'QuoteCrncy': vquote
             , 'MaxTradeId': vmid
             }, columns=['Exchange' , 'BaseCrncy', 'QuoteCrncy', 'MaxTradeId'])
-        qry = "DELETE FROM TradeDataID WHERE Exchange = 'GDAX';"
+        qry = "DELETE FROM TradeDataMaxID WHERE Exchange = 'GDAX';"
         db_engine.execute(qry)
-        dfID.to_sql('TradeDataID', db_engine, if_exists='append', index=False)
+        dfID.to_sql('TradeDataMaxID', db_engine, if_exists='append', index=False)
 
     # The update 
     if len(hld) > 0:

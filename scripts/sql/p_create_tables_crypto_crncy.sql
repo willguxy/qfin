@@ -14,7 +14,7 @@ CREATE TABLE MarketDataL2 (
 
 
 -- Max TradeID are saved here
-CREATE TABLE TradeDataID (
+CREATE TABLE TradeDataMaxID (
     Exchange    CHAR(6)    NOT NULL
   , BaseCrncy   CHAR(3)    NOT NULL
   , QuoteCrncy  CHAR(3)    NOT NULL
