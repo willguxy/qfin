@@ -30,7 +30,7 @@ def run():
         exception_str = StringIO()
         try:
             cnt  = snapshot_MarketDataL2_GDAX()
-            print("GDAX: loaded %s quotes" % cnt)
+            print("  GDAX: loaded %s quotes" % cnt)
             wait = 1
         except Exception as err:
             print("GDAX: failed to load market quote data")
@@ -42,7 +42,7 @@ def run():
         exception_str = StringIO()
         try:
             cnt  = download_trade_data_GDAX()
-            print("GDAX: loaded %s trades" % cnt)
+            print("  GDAX: loaded %s trades" % cnt)
             wait = 1
         except Exception as err:
             print("GDAX: failed to load market trade data")
