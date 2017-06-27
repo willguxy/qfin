@@ -39,7 +39,6 @@ def run():
             sleep(wait)
             wait *= 2
 
-        # @ToDo, there might be missing trades
         exception_str = StringIO()
         try:
             cnt  = download_trade_data_GDAX()

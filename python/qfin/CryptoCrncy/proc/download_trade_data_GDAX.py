@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import create_engine
 import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, concat
 
 import gdax
 
@@ -17,6 +17,8 @@ def download_trade_data_GDAX():
     """
     Currently only download the past 100 trades 
     """
+
+    # @ToDo, check if there are missing trades
     
     tot_cnt   = 0
     db_engine = create_engine(config.DB_Config.crypto_crncy_str)
@@ -32,14 +34,18 @@ def download_trade_data_GDAX():
         max_ids[base_ccy + '-' + quote_ccy] = int(mid)
 
     # iterate through each pair
+    hld = []
     for base_ccy, quote_ccy in pairs:
         try:
-            tot_cnt += _download_trades(base_ccy, quote_ccy, client, max_ids, db_engine)
+            cnt, df  = _download_trades(base_ccy, quote_ccy, client, max_ids)
+            tot_cnt += cnt
+            if df is not None:
+                hld.append(df)
             sleep(0.25)
         except Exception as err:
             pass
 
-    # Update TradeDataID
+    # First Update TradeDataID
     vbase, vquote, vmid = [], [], []
     for k, v in max_ids.items():
         base_ccy, quote_ccy = k[:3], k[-3:]
@@ -57,10 +63,15 @@ def download_trade_data_GDAX():
         db_engine.execute(qry)
         dfID.to_sql('TradeDataID', db_engine, if_exists='append', index=False)
 
+    # The update 
+    if len(hld) > 0:
+        dfTrds = concat(hld, ignore_index=True, axis=0)
+        dfTrds.to_sql('TradeData', db_engine, if_exists='append', index=False)
+
     return tot_cnt
 
 
-def _download_trades(base_ccy, quote_ccy, client, max_ids, db_engine):
+def _download_trades(base_ccy, quote_ccy, client, max_ids):
     
     # @ToDo: check if there are trades missing
 
@@ -99,7 +110,7 @@ def _download_trades(base_ccy, quote_ccy, client, max_ids, db_engine):
         vside.append( side      )
 
     if len(vid) == 0:
-        return 0
+        return 0, None
 
     dfTrds = DataFrame({
                   'TradeDate' : [d.date() for d in vtime]
@@ -115,8 +126,6 @@ def _download_trades(base_ccy, quote_ccy, client, max_ids, db_engine):
               }, columns = ['TradeDate', 'Exchange', 'BaseCrncy', 'QuoteCrncy', 'TradeId', 
                             'TimeIdx', 'TradeTime', 'Side', 'Price', 'Size'])
     max_ids[pair_name] = int(dfTrds['TradeId'].max())
-
-    dfTrds.to_sql('TradeData', db_engine, if_exists='append', index=False)
     cnt = dfTrds.shape[0]
     
-    return cnt
+    return cnt, dfTrds
